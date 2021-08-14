@@ -1,20 +1,24 @@
 (ns comment.handler 
   (:require
-   [reitit.core :as r]))
+   [reitit.core :as r]
+   [reitit.ring :as ring]))
 
 (def routes
-  [["/ping" {:name ::ping}]
-   ["/pong" ::pong]
-   ["/api" {:a :1}
+  [["/ping" ::ping]
+   ["/api"
     ["/users" ::users]
     ["/users/:id" ::user-id]
     ["/posts" ::posts]]])
 
 (def router
-  (r/router routes))
+  (ring/router routes))
+
+(r/routes router)
 
 (r/match-by-path router "/ping")
-(r/match-by-path router "/api/users/1")
+(r/match-by-path router "/api/users/333")
+
+(r/match-by-name router ::ping)
 
 (comment
   (r/routes router)
