@@ -4,7 +4,7 @@
    [reitit.ring :as ring]))
 
 (def routes
-  [["/ping" ::ping]
+  [["/ping" {:get (fn [req] {:status 200 :body "ok"})}] ; fn replace lamda char
    ["/api"
     ["/users" ::users]
     ["/users/:id" ::user-id]
