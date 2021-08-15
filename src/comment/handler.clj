@@ -31,11 +31,14 @@
              :handler ok}}]
     ["/:slug"
      {:get {:summary "Get comments by slug"
+            :parameters {:path {:slug string?}}
             :handler ok}}]
     ["/id/:id"
      {:put {:summary "Update a comment by the moderator"
+            :parameters {:path {:id int?}}
             :handler ok}
       :delete {:summary "Delete a comment by the moderator"
+               :parameters {:path {:id int?}}
                :handler ok}}]]
    ])
 
