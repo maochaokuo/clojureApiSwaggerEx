@@ -5,6 +5,8 @@
    [reitit.swagger :as swagger]
    [reitit.swagger-ui :as swagger-ui]
    [reitit.ring.middleware.muuntaja :as muuntaja]
+   [reitit.coercion.spec]
+   [reitit.ring.coercion :as coercion]
    [muuntaja.core :as m]
    [ring.adapter.jetty :as jetty]))
 
@@ -21,6 +23,10 @@
      {:get {:summary "Get all comments"
             :handler ok}
       :post {:summary "Create a new comment"
+             :parameters {:body {:name string?
+                                 :slug string?
+                                 :text string?
+                                 :parent-comment-id int?}}
              :handler ok}}]
     ["/:slug"
      {:get {:summary "Get comments by slug"
@@ -34,8 +40,11 @@
 
 (def router
   (ring/router routes
-               {:data {:muuntaja m/instance
+               {:data {:coercion reitit.coercion.spec/coercion
+                       :muuntaja m/instance
                        :middleware [muuntaja/format-middleware
+                                    coercion/coerce-request-middleware
+                                    coercion/coerce-response-middleware
                                     ]}}))
 
 (def app
