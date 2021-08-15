@@ -2,6 +2,8 @@
   (:require
    [reitit.core :as r]
    [reitit.ring :as ring]
+   [reitit.swagger :as swagger]
+   [reitit.swagger-ui :as swagger-ui]
    [ring.adapter.jetty :as jetty]))
 
 (def routes
@@ -12,7 +14,10 @@
   (ring/router routes))
 
 (def app
-  (ring/ring-handler router))
+  (ring/ring-handler router
+                     (ring/routes
+                       (swagger-ui/create-swagger-ui-handler
+                         {:path "/"}))))
 
 (defn start []
   (jetty/run-jetty #'app {:port 3000 :join? false})
