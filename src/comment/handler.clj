@@ -8,16 +8,28 @@
    [muuntaja.core :as m]
    [ring.adapter.jetty :as jetty]))
 
+(def ok (constantly {:status 200 :body "ok"}))
+
 (def routes
-  [["/ping"
-    {:get {:swagger {:tags ["test"]}
-           :handler (fn [req] {:status 200 :body "ok"})}}] ; fn replace lamda char
-   ["/swagger.json"
-    {:get {:no-doc true?
-           :swagger {:info {:title "Comment System API"
-                            :description "Comment System API"}}
-           :handler (swagger/create-swagger-handler)
-           }}]
+  [["/swagger.json"
+    {:get {:no-doc true
+           :swagger {:info {:title "Comment System API"}}
+           :handler (swagger/create-swagger-handler)}}]
+   ["/comments"
+    {:swagger {:tags ["comments"]}}
+    [""
+     {:get {:summary "Get all comments"
+            :handler ok}
+      :post {:summary "Create a new comment"
+             :handler ok}}]
+    ["/:slug"
+     {:get {:summary "Get comments by slug"
+            :handler ok}}]
+    ["/id/:id"
+     {:put {:summary "Update a comment by the moderator"
+            :handler ok}
+      :delete {:summary "Delete a comment by the moderator"
+               :handler ok}}]]
    ])
 
 (def router
