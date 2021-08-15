@@ -1,7 +1,8 @@
 (ns comment.handler 
   (:require
    [reitit.core :as r]
-   [reitit.ring :as ring]))
+   [reitit.ring :as ring]
+   [ring.adapter.jetty :as jetty]))
 
 (def routes
   [["/ping" {:get (fn [req] {:status 200 :body "ok"})}] ; fn replace lamda char
@@ -13,8 +14,17 @@
 (def app
   (ring/ring-handler router))
 
-(app {:request-method :get :uri "/ping"})
+(defn start []
+  (jetty/run-jetty #'app {:port 3000 :join? false})
+  (println "server running on port 3000")
+  )
 
+(comment
+  (app {:request-method :get :uri "/ping"})
+  (start)
+  )
+
+; archive
 (comment
   (r/routes router)
 
