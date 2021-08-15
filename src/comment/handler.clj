@@ -4,14 +4,29 @@
    [reitit.ring :as ring]
    [reitit.swagger :as swagger]
    [reitit.swagger-ui :as swagger-ui]
+   [reitit.ring.middleware.muuntaja :as muuntaja]
+   [muuntaja.core :as m]
    [ring.adapter.jetty :as jetty]))
 
 (def routes
-  [["/ping" {:get (fn [req] {:status 200 :body "ok"})}] ; fn replace lamda char
+  [["/ping"
+    {:get {:handler (fn [req] {:status 200 :body {:a "ok"}})}}] ; fn replace lamda char
+   ["/swagger.json"
+    {:get {:handler (swagger/create-swagger-handler)
+                      ;response (handler req)
+                      ;(def r response)
+                      ;response
+           }}]
    ])
 
 (def router
-  (ring/router routes))
+  (ring/router routes
+               {:data {:muuntaja m/instance
+                       :middleware [muuntaja/format-middleware
+                                    ;;muuntaja/format-negotiate-middleware
+                                    ;;muuntaja/format-request-middleware
+                                    ;;muuntaja/format-response-middleware
+                                    ]}}))
 
 (def app
   (ring/ring-handler router
