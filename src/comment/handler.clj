@@ -5,6 +5,7 @@
    [reitit.swagger :as swagger]
    [reitit.swagger-ui :as swagger-ui]
    [reitit.ring.middleware.muuntaja :as muuntaja]
+   [reitit.ring.middleware.exception :as exception]
    [reitit.coercion.spec]
    [reitit.ring.coercion :as coercion]
    [muuntaja.core :as m]
@@ -47,6 +48,7 @@
                {:data {:coercion reitit.coercion.spec/coercion
                        :muuntaja m/instance
                        :middleware [muuntaja/format-middleware
+                                    exception/exception-middleware
                                     coercion/coerce-request-middleware
                                     coercion/coerce-response-middleware
                                     ]}}))
