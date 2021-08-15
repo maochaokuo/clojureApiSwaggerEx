@@ -27,7 +27,7 @@
                                  :slug string?
                                  :text string?
                                  :parent-comment-id int?}}
-             :response {200 {:body string?}}
+             :responses {200 {:body string?}}
              :handler ok}}]
     ["/:slug"
      {:get {:summary "Get comments by slug"
