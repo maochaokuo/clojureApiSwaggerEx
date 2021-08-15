@@ -10,12 +10,13 @@
 
 (def routes
   [["/ping"
-    {:get {:handler (fn [req] {:status 200 :body {:a "ok"}})}}] ; fn replace lamda char
+    {:get {:swagger {:tags ["test"]}
+           :handler (fn [req] {:status 200 :body "ok"})}}] ; fn replace lamda char
    ["/swagger.json"
-    {:get {:handler (swagger/create-swagger-handler)
-                      ;response (handler req)
-                      ;(def r response)
-                      ;response
+    {:get {:no-doc true?
+           :swagger {:info {:title "Comment System API"
+                            :description "Comment System API"}}
+           :handler (swagger/create-swagger-handler)
            }}]
    ])
 
@@ -23,9 +24,6 @@
   (ring/router routes
                {:data {:muuntaja m/instance
                        :middleware [muuntaja/format-middleware
-                                    ;;muuntaja/format-negotiate-middleware
-                                    ;;muuntaja/format-request-middleware
-                                    ;;muuntaja/format-response-middleware
                                     ]}}))
 
 (def app
