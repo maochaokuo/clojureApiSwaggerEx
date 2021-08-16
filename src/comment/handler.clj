@@ -1,6 +1,5 @@
 (ns comment.handler
   (:require
-    [reitit.core :as r]
     [reitit.ring :as ring]
     [reitit.swagger :as swagger]
     [reitit.swagger-ui :as swagger-ui]
@@ -9,7 +8,7 @@
     [reitit.coercion.spec]
     [reitit.ring.coercion :as coercion]
     [muuntaja.core :as m]
-    [ring.adapter.jetty :as jetty]))
+    [reitit.dev.pretty :as pretty]))
 
 (def ok (constantly {:status 200 :body "ok"}))
 
@@ -43,29 +42,23 @@
                :handler    ok}}]]
    ])
 
-(def router
-  (ring/router routes
-               {:data {:coercion   reitit.coercion.spec/coercion
-                       :muuntaja   m/instance
-                       :middleware [swagger/swagger-feature
-                                    muuntaja/format-negotiate-middleware
-                                    muuntaja/format-response-middleware
-                                    exception/exception-middleware
-                                    muuntaja/format-request-middleware
-                                    coercion/coerce-request-middleware
-                                    coercion/coerce-response-middleware
-                                    ]}}))
-
-(def app
-  (ring/ring-handler router
-                     (ring/routes
-                       (swagger-ui/create-swagger-ui-handler
-                         {:path "/"}))))
-
-(defn start []
-  (jetty/run-jetty #'app {:port 3000 :join? false})
-  (println "server running on port 3000")
-  )
+(defn create-app [db]
+  (ring/ring-handler
+    (ring/router routes
+                 {:exception pretty/exception
+                  :data {:coercion   reitit.coercion.spec/coercion
+                         :muuntaja   m/instance
+                         :middleware [swagger/swagger-feature
+                                      muuntaja/format-negotiate-middleware
+                                      muuntaja/format-response-middleware
+                                      exception/exception-middleware
+                                      muuntaja/format-request-middleware
+                                      coercion/coerce-request-middleware
+                                      coercion/coerce-response-middleware
+                                      ]}})
+    (ring/routes
+     (swagger-ui/create-swagger-ui-handler
+       {:path "/"}))))
 
 (comment
   (app {:request-method :get :uri "/ping"})

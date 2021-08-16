@@ -1,31 +1,29 @@
 (ns comment.system
-  (:require [integrant.core :as ig]))
+  (:require [integrant.core :as ig]
+            [ring.adapter.jetty :as jetty]
+            [comment.handler :as handler]))
 
 (def system-config
-  {::a {:b (ig/ref ::b)}
-   ::b {:c (ig/ref ::c)}
-   ::c nil})
+  {:comment/jetty {:handler (ig/ref :comment/handler)
+                   :port 3000}
+   :comment/handler {:db (ig/ref :comment/sqlite)}
+   :comment/sqlite nil})
 
-(defmethod ig/init-key ::a [a {:keys [b]}]
-  (println "Initialize" a)
-  a)
+(defmethod ig/init-key :comment/jetty [_ {:keys [handler port]}]
+  (println "server running on port 3000")
+  (jetty/run-jetty handler {:port port :join? false}))
 
-(defmethod ig/init-key ::b [b {:keys [c]}]
-  (println "Initialize" b)
-  b)
+(defmethod ig/init-key :comment/handler [_ {:keys [db]}]
+  (handler/create-app db))
 
-(defmethod ig/init-key ::c [c _]
-  (println "Initialized" c)
-  c)
+(defmethod ig/init-key :comment/sqlite [_ _]
+  nil)
 
-(defmethod ig/halt-key! ::a [_ a]
-  (println "Halt" a))
+(defmethod ig/halt-key! :comment/jetty [_ jetty]
+  (.stop jetty))
 
-(defmethod ig/halt-key! ::b [_ b]
-  (println "Halt" b))
-
-(defmethod ig/halt-key! ::c [_ c]
-  (println "Halt" c))
+(defn -main []
+  (ig/init system-config))
 
 (comment
   (def system (ig/init system-config))
