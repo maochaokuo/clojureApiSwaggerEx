@@ -29,4 +29,5 @@
 
 (comment
   (def system (ig/init system-config))
+  (ig/halt! system)
   )
