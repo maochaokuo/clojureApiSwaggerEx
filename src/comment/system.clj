@@ -17,7 +17,7 @@
   (handler/create-app db))
 
 (defmethod ig/init-key :comment/sqlite [_ _]
-  nil)
+  {:no-db true})
 
 (defmethod ig/halt-key! :comment/jetty [_ jetty]
   (.stop jetty))
