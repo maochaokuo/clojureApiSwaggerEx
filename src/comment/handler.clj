@@ -10,7 +10,7 @@
     [muuntaja.core :as m]
     [reitit.dev.pretty :as pretty]))
 
-(def ok (constantly {:status 200 :body "ok"}))
+(def ok (constantly {:status 200 :body "yay"}))
 
 (def routes
   [["/swagger.json"
